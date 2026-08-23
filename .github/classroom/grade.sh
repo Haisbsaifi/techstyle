@@ -162,10 +162,70 @@ solution_for_id() {
     helm-chart)
       echo "Erstelle helm/Chart.yaml mit Helm-Konfiguration"
       ;;
+    security-workflow)
+      echo "Erstelle .github/workflows/security-pipeline.yml mit einem jobs:-Block"
+      ;;
+    security-trigger)
+      echo "Trigger ergänzen: on: push (main) und pull_request"
+      ;;
+    snyk-token)
+      echo "Snyk-Token als GitHub Secret SNYK_TOKEN hinterlegen und als \${{ secrets.SNYK_TOKEN }} referenzieren"
+      ;;
+    snyk-sca)
+      echo "Dependency-Scanning ergänzen: 'snyk test' bzw. die snyk/actions-Action"
+      ;;
+    snyk-sast)
+      echo "Statische Code-Analyse ergänzen: 'snyk code test'"
+      ;;
+    severity-threshold)
+      echo "Severity-Threshold setzen, z. B. --severity-threshold=high"
+      ;;
+    sarif-upload)
+      echo "SARIF-Datei von Snyk erzeugen und mit github/codeql-action/upload-sarif hochladen"
+      ;;
+    security-doc)
+      echo "Erstelle SECURITY.md mit den gefundenen Schwachstellen, Massnahmen und Behebungsplan (mind. 100 Wörter)"
+      ;;
+    deploy-workflow)
+      echo "Erstelle einen Deployment-Workflow, z. B. .github/workflows/deployment.yml"
+      ;;
+    container-build)
+      echo "Container-Build ergänzen: 'docker build' oder docker/build-push-action"
+      ;;
+    registry-push)
+      echo "Image in die Registry pushen (AWS ECR), z. B. mit aws-actions/amazon-ecr-login"
+      ;;
+    aws-credentials)
+      echo "AWS-Credentials als GitHub Secrets hinterlegen und aws-actions/configure-aws-credentials nutzen"
+      ;;
+    deploy-stage)
+      echo "Deployment-Schritt auf die EC2-Instanz ergänzen (SSH + docker compose up)"
+      ;;
+    compose-file)
+      echo "Erstelle docker-compose.yml für App- und Datenbank-Container"
+      ;;
+    deploy-doc)
+      echo "Erstelle DEPLOYMENT.md mit Pipeline-Architektur und Bedienungsanleitung (mind. 100 Wörter)"
+      ;;
     *)
       echo "Überprüfe die Anforderungen in der Dokumentation"
       ;;
   esac
+}
+
+# Schreibt ein Ergebnis nach $CLASSROOM_RESULTS (TSV: STATUS<TAB>Beschreibung),
+# falls die Variable gesetzt ist. update_readme.py hakt damit die
+# Abnahmekriterien im README ab. Die Datei wird beim ersten Check geleert,
+# damit ein erneuter Lauf nicht anhaengt.
+record_result() {
+  [ -n "${CLASSROOM_RESULTS:-}" ] || return 0
+
+  if [ -z "${_C50_RESULTS_INIT:-}" ]; then
+    : > "$CLASSROOM_RESULTS"
+    _C50_RESULTS_INIT=1
+  fi
+
+  printf '%s\t%s\n' "$1" "$2" >> "$CLASSROOM_RESULTS"
 }
 
 check() {
@@ -176,12 +236,14 @@ check() {
   if eval "$condition" &>/dev/null; then
     echo "✅ $description"
     echo "::notice title=✅ $description::Check erfolgreich bestanden"
+    record_result PASS "$description"
     PASS=$((PASS + 1))
   else
     echo "❌ $description"
     local solution
     solution="$(solution_for_id "$id")"
     echo "::error title=❌ $description::$solution"
+    record_result FAIL "$description"
     FAIL=$((FAIL + 1))
   fi
 }
