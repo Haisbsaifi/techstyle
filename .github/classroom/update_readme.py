@@ -20,7 +20,12 @@ import sys
 from datetime import datetime, timezone
 
 README = "README.md"
-CHECKBOX = re.compile(r"^(\s*[-*]\s+\[)([ xX])(\]\s+)(\S.*?)(\s*)$")
+# Optionaler Status-Marker (✅/⬜) direkt nach der Checkbox: er wird beim
+# Schreiben immer neu gesetzt und beim Lesen uebersprungen, damit der
+# Beschreibungstext der Schluessel bleibt.
+CHECKBOX = re.compile(r"^(\s*[-*]\s+\[)([ xX])(\]\s+)(?:[✅⬜]\s+)?(\S.*?)(\s*)$")
+MARK_DONE = "✅"
+MARK_OPEN = "⬜"
 PROGRESS_START = "<!-- c50:progress -->"
 PROGRESS_END = "<!-- /c50:progress -->"
 
@@ -42,13 +47,25 @@ def load_results(path):
     return results
 
 
+def render_bar(done, total, width=10):
+    """Balken aus gruenen/leeren Quadraten — auf einen Blick lesbar."""
+    if total <= 0:
+        return ""
+    filled = round(width * done / total)
+    # Solange noch etwas offen ist, nie den vollen Balken zeigen.
+    if filled == width and done < total:
+        filled = width - 1
+    return "🟩" * filled + "⬜" * (width - filled)
+
+
 def render_progress(done, total):
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    bar = render_bar(done, total)
     if total and done == total:
-        head = f"✅ **Alle {total} automatisch geprueften Kriterien erfuellt.**"
+        head = f"✅ **Alle {total} Kriterien erfüllt**"
     else:
-        head = f"**Fortschritt: {done} / {total} automatisch geprueften Kriterien erfuellt.**"
-    return [PROGRESS_START, head + f" Stand: {stamp}.", PROGRESS_END]
+        head = f"**Fortschritt: {done} / {total} Kriterien erfüllt**"
+    return [PROGRESS_START, f"{head} {bar} — Stand: {stamp}.", PROGRESS_END]
 
 
 def main():
@@ -80,9 +97,13 @@ def main():
                 passed = results[description]
                 done += passed
                 mark = "x" if passed else " "
+                marker = MARK_DONE if passed else MARK_OPEN
                 if match.group(2) != mark:
                     flipped += 1
-                line = f"{match.group(1)}{mark}{match.group(3)}{match.group(4)}\n"
+                line = (
+                    f"{match.group(1)}{mark}{match.group(3)}"
+                    f"{marker} {match.group(4)}\n"
+                )
         out.append(line)
 
     # Fortschrittsblock zwischen den Markern ersetzen, falls vorhanden.
