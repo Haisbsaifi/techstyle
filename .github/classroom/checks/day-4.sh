@@ -83,7 +83,7 @@ check \
 check \
   "pipeline-strict" \
   "Aufgabe 2: Pipeline schlägt bei Fehlern fehl (kein continue-on-error)" \
-  "! grep -qiE 'continue-on-error:[[:space:]]*true' $CI_FILES"
+  "ci_workflow_files | grep -q . && ! grep -qiE 'continue-on-error:[[:space:]]*true' $CI_FILES"
 
 echo ""
 echo "── Aufgabe 3: Code-Qualität und Linter-Integration ──"
@@ -106,6 +106,6 @@ check \
 check \
   "lint-strict" \
   "Aufgabe 3: Pipeline bricht bei Style-Verstössen ab (kein --exit-zero / || true)" \
-  "! grep -qiE 'exit-zero|(flake8|pylint|ruff).*\|\|[[:space:]]*true' $CI_FILES"
+  "ci_workflow_files | grep -q . && ! grep -qiE 'exit-zero|(flake8|pylint|ruff).*\|\|[[:space:]]*true' $CI_FILES"
 
 summary 4

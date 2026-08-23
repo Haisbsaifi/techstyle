@@ -10,7 +10,9 @@ on:
 permissions:
   actions: read
   checks: write
-  contents: read
+  # write: der Job hakt die erfüllten Abnahmekriterien im README ab und
+  # committet das Ergebnis zurück.
+  contents: write
 
 jobs:
   run-autograding-tests:
@@ -40,3 +42,32 @@ jobs:
           ABNAHMEKRITERIEN_RESULTS: "${{ steps.abnahmekriterien.outputs.result }}"
         with:
           runners: abnahmekriterien
+
+      # Hakt jedes erfüllte Kriterium im README ab und entfernt den Haken
+      # wieder, sobald eine Änderung das Kriterium bricht. Der Commit trägt
+      # [skip ci], damit er keinen weiteren Workflow-Lauf auslöst.
+      # Läuft bewusst auch dann, wenn die Bewertung rot ist (if: always()) —
+      # sonst würde der Fortschritt nur bei einem perfekten Lauf sichtbar.
+      - name: Abnahmekriterien im README abhaken
+        if: always() && github.event_name == 'push'
+        continue-on-error: true
+        env:
+          CLASSROOM_RESULTS: ${{ runner.temp }}/classroom-results.tsv
+        run: |
+          # Eigener Lauf statt Wiederverwendung des Grader-Schritts: so hängt
+          # das Abhaken nicht davon ab, wie die Grader-Action Env-Variablen
+          # durchreicht.
+          bash .github/classroom/grade.sh > /dev/null 2>&1 || true
+
+          python3 .github/classroom/update_readme.py && status=0 || status=$?
+
+          # 10 = README wurde geändert, 0 = bereits aktuell.
+          if [ "${status}" -ne 10 ]; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: Abnahmekriterien im README aktualisiert [skip ci]"
+          git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"
