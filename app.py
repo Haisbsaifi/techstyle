@@ -12,6 +12,9 @@ app = Flask(__name__)
 app.secret_key = "password"
 
 # Hardcoded database path — works on my machine
+# Windows: there is no /tmp — Python resolves this to <drive>:\tmp\techstyle.db.
+# Create that folder first (mkdir C:\tmp -Force) or run_dev.ps1 does it for you,
+# otherwise SQLite aborts with "unable to open database file".
 DATABASE = "/tmp/techstyle.db"
 
 # Always helpful during development
