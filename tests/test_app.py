@@ -38,4 +38,3 @@ def test_home_page(client, mock_db):
         "SELECT * FROM products ORDER BY id",
         (),
     )
-    

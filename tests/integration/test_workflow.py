@@ -45,4 +45,3 @@ def test_user_registration_flow(client):
     )
 
     assert rv.status_code in [200, 302]
-    
