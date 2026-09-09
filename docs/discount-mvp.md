@@ -102,3 +102,23 @@ Mit MVP 1 kann TechStyle schnell eine einfache Gutschein-Funktion bereitstellen 
 Anschliessend wird das Feature mit MVP 2 um verwaltbare und zeitlich begrenzte Gutscheine erweitert.
 
 MVP 3 ermöglicht später personalisierte und komplexere Marketingkampagnen.
+## INVEST-Check der User Stories
+
+Die User Stories für MVP 1 wurden nach den INVEST-Kriterien formuliert.
+
+| Kriterium | Bedeutung | Umsetzung im MVP |
+|---|---|---|
+| **I – Independent** | Unabhängig | Die Stories behandeln getrennte Funktionen wie Eingabe, Validierung und Preisanzeige. |
+| **N – Negotiable** | Verhandelbar | Details der technischen Umsetzung und der Benutzeroberfläche können angepasst werden. |
+| **V – Valuable** | Wertvoll | Jede Story liefert einen konkreten Nutzen für den Kunden. |
+| **E – Estimable** | Schätzbar | Der Umfang jeder Story ist klar genug, um den Entwicklungsaufwand abzuschätzen. |
+| **S – Small** | Klein | Die Gutschein-Funktion wurde in drei kleine, überschaubare Stories aufgeteilt. |
+| **T – Testable** | Testbar | Jede Story besitzt klare Akzeptanzkriterien und kann automatisiert oder manuell getestet werden. |
+
+### User Stories von MVP 1
+
+1. **Gutscheincode im Checkout eingeben**
+2. **Gutscheincode validieren**
+3. **Rabattierten Gesamtpreis anzeigen**
+
+Durch diese Aufteilung kann jede Funktion einzeln entwickelt, getestet und über den Kanban-Workflow bis zum Deployment gebracht werden.
