@@ -11,7 +11,7 @@ import os
 # Windows: there is no /tmp — Python resolves this to <drive>:\tmp\techstyle.db.
 # Create that folder first (mkdir C:\tmp -Force) or run_dev.ps1 does it for you,
 # otherwise SQLite aborts with "unable to open database file".
-DATABASE = "/tmp/techstyle.db"
+DATABASE = r"C:\TBZ\sem-4\Devops\Projekt\techstyle\techstyle.db"
 
 PRODUCTS = [
     # ── Hoodies ──────────────────────────────────────────────────────────────
