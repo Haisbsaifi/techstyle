@@ -49,6 +49,54 @@ python app.py
 > Wenn PowerShell die Aktivierung blockiert (`... cannot be loaded because running scripts is disabled`):
 > `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` ausführen und den Befehl wiederholen.
 
+## Project Structure
+
+```text
+techstyle/
+├── app.py
+├── seed_data.py
+├── requirements.txt
+├── run_dev.sh
+├── run_dev.ps1
+├── deploy.sh
+├── README.md
+├── CONTRIBUTING.md
+├── .gitignore
+├── templates/
+├── static/
+└── tests/
+```
+
+### Important Files
+
+| File / Directory | Description |
+|---|---|
+| `app.py` | Main Flask application |
+| `seed_data.py` | Creates and seeds the SQLite database |
+| `requirements.txt` | Python dependencies |
+| `templates/` | HTML templates |
+| `static/` | CSS, JavaScript and static files |
+| `tests/` | Automated tests |
+| `.gitignore` | Defines files that are excluded from Git |
+| `CONTRIBUTING.md` | Git workflow and contribution guidelines |
+
+## Documentation
+
+Important project documentation:
+
+- [README](./README.md) – Installation and project overview
+- [Contribution Guidelines](./CONTRIBUTING.md) – Branching, merging and development workflow
+
+## Contributing
+
+TechStyle uses **GitHub Flow** for development.
+
+New features and bug fixes are developed in separate branches and integrated into `main` through Pull Requests.
+
+For the complete development and Git workflow, see:
+
+[CONTRIBUTING.md](./CONTRIBUTING.md)
+
 ## Deploy to Production
 
 ```bash
