@@ -274,6 +274,144 @@ Bei komplexen Konflikten wird ein weiteres Teammitglied hinzugezogen.
 Wenn ein Konflikt Auswirkungen auf die Funktionalität oder Architektur des Projekts hat, wird die Lösung im Pull Request dokumentiert.
 
 ---
+## 7. Git Workflow
+
+Für jede Änderung wird ein eigener Branch erstellt. Dadurch werden Änderungen nicht direkt auf dem produktiven `main` Branch durchgeführt.
+
+### 1. Main Branch aktualisieren
+
+Bevor mit einer neuen Änderung begonnen wird, wird der aktuelle Stand von `main` geladen.
+
+```bash
+git checkout main
+git pull origin main
+```
+
+### 2. Neuen Branch erstellen
+
+Für ein neues Feature:
+
+```bash
+git checkout -b feature/shopping-cart
+```
+
+Für einen Bugfix:
+
+```bash
+git checkout -b bugfix/cart-calculation
+```
+
+Für einen Hotfix:
+
+```bash
+git checkout -b hotfix/login-error
+```
+
+### 3. Änderungen durchführen
+
+Nach der Entwicklung werden die Änderungen überprüft:
+
+```bash
+git status
+```
+
+Danach werden die gewünschten Dateien hinzugefügt:
+
+```bash
+git add .
+```
+
+### 4. Commit erstellen
+
+Die Änderungen werden mit einer aussagekräftigen Commit Message gespeichert.
+
+Beispiel:
+
+```bash
+git commit -m "feat: add shopping cart"
+```
+
+### 5. Branch pushen
+
+Der Branch wird zu GitHub gepusht:
+
+```bash
+git push -u origin feature/shopping-cart
+```
+
+### 6. Pull Request erstellen
+
+Auf GitHub wird anschließend ein Pull Request vom Feature-, Bugfix- oder Hotfix-Branch nach `main` erstellt.
+
+Der Pull Request muss überprüft und getestet werden, bevor er gemerged werden darf.
+
+---
+
+## 8. Commit-Message-Richtlinien
+
+Für TechStyle verwenden wir **Conventional Commits**.
+
+Das Format lautet:
+
+```text
+<type>: <beschreibung>
+```
+
+Beispiele:
+
+```text
+feat: add shopping cart
+fix: correct cart calculation
+docs: update README
+test: add shopping cart tests
+chore: update .gitignore
+refactor: simplify checkout logic
+```
+
+| Type | Bedeutung |
+|---|---|
+| `feat` | Neue Funktion |
+| `fix` | Fehlerbehebung |
+| `docs` | Änderung an der Dokumentation |
+| `test` | Tests hinzufügen oder ändern |
+| `chore` | Wartung oder Konfiguration |
+| `refactor` | Code verbessern, ohne die Funktion zu verändern |
+
+---
+
+## 9. Testing-Anforderungen
+
+Vor einem Pull Request müssen die vorhandenen Tests lokal ausgeführt werden.
+
+```bash
+python -m pytest -q
+```
+
+Ein Pull Request darf nur gemerged werden, wenn:
+
+- alle automatisierten Tests erfolgreich sind
+- die Anwendung weiterhin funktioniert
+- keine neuen Fehler entstanden sind
+- die CI-Pipeline erfolgreich durchläuft
+
+---
+
+## 10. Review-Prozess
+
+Jeder Pull Request benötigt mindestens **ein Review durch ein anderes Teammitglied**.
+
+Vor dem Merge wird überprüft:
+
+- Ist der Code verständlich?
+- Funktioniert die Änderung?
+- Sind alle Tests erfolgreich?
+- Wurde die Branch-Naming-Convention eingehalten?
+- Sind die Commit Messages verständlich?
+- Wurde die Dokumentation bei Bedarf aktualisiert?
+- Sind keine Secrets oder Credentials enthalten?
+- Gibt es keine ungelösten Merge-Konflikte?
+
+Nach erfolgreichem Review und erfolgreichen Tests darf ein berechtigtes Mitglied des TechStyle DevOps Teams den Pull Request mergen.
 
 ## Zusammenfassung
 
