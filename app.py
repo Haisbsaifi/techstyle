@@ -502,11 +502,6 @@ def inject_cart_count():
 def inject_now():
     return {"now": datetime.datetime.utcnow()}
 
-def quality_gate_test(value):
-    if value > 10:
-        return "high"
-    return "low"
-
 # ─────────────────────────────────────────────
 #  Main
 # ─────────────────────────────────────────────
