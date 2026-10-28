@@ -797,7 +797,7 @@ def inject_cart_count():
 
 def inject_now():
 
-    return {"now": datetime.datetime.utcnow()}
+    return {"now": datetime.datetime.now(datetime.timezone.utc)}
 
 # ─────────────────────────────────────────────
 

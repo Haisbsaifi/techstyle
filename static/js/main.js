@@ -43,10 +43,10 @@ document.addEventListener('DOMContentLoaded', function () {
 // ── Simple quantity +/- helpers (used on product detail page) ───────
 function increment() {
   const el = document.getElementById('qty');
-  if (el) el.value = Math.min(parseInt(el.value || 1) + 1, parseInt(el.max || 99));
+  if (el) el.value = Math.min(Number.parseInt(el.value || 1) + 1, Number.Number.parseInt(el.max || 99));
 }
 
 function decrement() {
   const el = document.getElementById('qty');
-  if (el) el.value = Math.max(parseInt(el.value || 1) - 1, 1);
+  if (el) el.value = Math.max(Number.parseInt(el.value || 1) - 1, 1);
 }
