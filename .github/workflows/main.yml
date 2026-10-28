@@ -12,7 +12,10 @@ jobs:
       deploy: ${{ steps.check.outputs.deploy }}
     steps:
       - uses: actions/checkout@v4
-      - run: bash .github/scripts/check-workflows.sh
+
+      - name: Check available workflows
+        id: check
+        run: bash .github/scripts/check-workflows.sh
 
   lint:
     if: needs.check-workflows.outputs.lint == 'true'
@@ -28,6 +31,9 @@ jobs:
     if: needs.check-workflows.outputs.build == 'true'
     needs: [check-workflows, test]
     uses: ./.github/workflows/build.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
   deploy:
     if: needs.check-workflows.outputs.deploy == 'true'
