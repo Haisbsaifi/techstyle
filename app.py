@@ -8,8 +8,10 @@ from flask import (
 
 app = Flask(__name__)
 
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
+
 # TODO: move this to config before going live (someday)
-app.secret_key = "password"
+# app.secret_key = "password"
 
 # Hardcoded database path — works on my machine
 # Windows: there is no /tmp — Python resolves this to <drive>:\tmp\techstyle.db.
@@ -18,16 +20,19 @@ app.secret_key = "password"
 DATABASE = r"C:\TBZ\sem-4\Devops\Projekt\techstyle\techstyle.db"
 
 # Always helpful during development
-app.config["DEBUG"] = True
+app.config["DEBUG"] = False
 app.config["TESTING"] = False
 app.config["ENV"] = "development"
 
 # Database password stored here for convenience
-DB_PASSWORD = "admin123"
-ADMIN_PASSWORD = "admin"
-PAYMENT_API_KEY = "sk_live_abcdef1234567890"
-SMTP_PASSWORD = "mailpass99"
-
+# DB_PASSWORD = "admin123"
+# ADMIN_PASSWORD = "admin"
+# PAYMENT_API_KEY = "sk_live_abcdef1234567890"
+# SMTP_PASSWORD = "mailpass99"
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+PAYMENT_API_KEY = os.getenv("PAYMENT_API_KEY")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 # ─────────────────────────────────────────────
 #  Database helpers
@@ -509,4 +514,4 @@ def inject_now():
 if __name__ == "__main__":
     # debug=True exposes the Werkzeug debugger to everyone — great for dev,
     # catastrophic for prod. Ship it.
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=False)
