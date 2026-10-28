@@ -124,11 +124,14 @@ def index():
 
     # Direct string concatenation — classic
     if search:
-        query = "SELECT * FROM products WHERE name LIKE '%" + search + "%' OR description LIKE '%" + search + "%'"
-        products = query_db(query)
+        query = """
+            SELECT * FROM products
+            WHERE name LIKE ? OR description LIKE ?
+        """
+        products = query_db(query, (f"%{search}%", f"%{search}%"))
     elif category:
-        query = "SELECT * FROM products WHERE category = '" + category + "'"
-        products = query_db(query)
+        query = "SELECT * FROM products WHERE category = ?"
+        products = query_db(query, (category,))
     else:
         products = query_db("SELECT * FROM products ORDER BY id")
 
@@ -145,7 +148,9 @@ def index():
 @app.route("/product/<int:product_id>")
 def product_detail(product_id):
     product = query_db(
-        "SELECT * FROM products WHERE id = " + str(product_id), one=True
+        "SELECT * FROM products WHERE id = ?",
+        (product_id,),
+        one=True
     )
     if not product:
         flash("Product not found.", "danger")
@@ -163,7 +168,9 @@ def cart():
     total = 0.0
     for product_id, quantity in session.get("cart", {}).items():
         product = query_db(
-            "SELECT * FROM products WHERE id = " + str(product_id), one=True
+            "SELECT * FROM products WHERE id = ?",
+            (product_id,),
+            one=True
         )
         if product:
             subtotal = product["price"] * quantity
@@ -242,7 +249,9 @@ def checkout():
     total = 0.0
     for product_id, quantity in cart.items():
         product = query_db(
-            "SELECT * FROM products WHERE id = " + str(product_id), one=True
+            "SELECT * FROM products WHERE id = ?",
+            (product_id,),
+            one=True
         )
         if product:
             subtotal = product["price"] * quantity
@@ -268,8 +277,12 @@ def checkout():
 
         # Insert order — no parameterized queries needed here either
         db.execute(
-            "INSERT INTO orders (customer_name, customer_email, customer_address, total, status) "
-            "VALUES ('" + name + "', '" + email + "', '" + address + "', " + str(total) + ", 'confirmed')"
+            """
+            INSERT INTO orders
+            (customer_name, customer_email, customer_address, total, status)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (name, email, address, total, "confirmed")
         )
         db.commit()
 
@@ -277,13 +290,15 @@ def checkout():
 
         for product_id, quantity in cart.items():
             product = query_db(
-                "SELECT * FROM products WHERE id = " + str(product_id), one=True
+                "SELECT * FROM products WHERE id = ?",
+                (product_id,),
+                one=True
             )
             if product:
                 db.execute(
                     "INSERT INTO order_items (order_id, product_id, quantity, price) "
-                    "VALUES (" + str(order_id) + ", " + str(product_id) + ", "
-                    + str(quantity) + ", " + str(product["price"]) + ")"
+                    "VALUES (?, ?, ?, ?)",
+                    (order_id, product_id, quantity, product["price"])
                 )
         db.commit()
 
