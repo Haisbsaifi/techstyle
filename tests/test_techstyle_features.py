@@ -1,5 +1,4 @@
 
-import sqlite3
 import pytest
 import app as techstyle
 from werkzeug.security import check_password_hash
