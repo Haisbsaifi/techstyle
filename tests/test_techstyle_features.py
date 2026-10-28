@@ -219,3 +219,47 @@ def test_about(client):
 def test_404(client):
     response = client.get("/not-existing-page")
     assert response.status_code == 404
+
+
+def test_update_cart(client):
+    client.post("/cart/add/1")
+
+    response = client.post(
+        "/cart/update",
+        data={"qty_1": "3"},
+    )
+
+    assert response.status_code == 302
+
+    with client.session_transaction() as session:
+        assert session["cart"]["1"] == 3
+
+
+def test_remove_item_with_zero_quantity(client):
+    client.post("/cart/add/1")
+
+    response = client.post(
+        "/cart/update",
+        data={"qty_1": "0"},
+    )
+
+    assert response.status_code == 302
+
+    with client.session_transaction() as session:
+        assert "1" not in session["cart"]
+
+
+def test_checkout_missing_customer_data(client):
+    client.post("/cart/add/1")
+
+    response = client.post(
+        "/checkout",
+        data={
+            "name": "",
+            "email": "",
+            "address": "",
+        },
+    )
+
+    assert response.status_code == 200
+    assert b"Please fill in all fields" in response.data
