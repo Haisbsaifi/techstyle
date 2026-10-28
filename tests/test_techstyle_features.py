@@ -263,4 +263,3 @@ def test_checkout_missing_customer_data(client):
 
     assert response.status_code == 200
     assert b"Please fill in all fields" in response.data
-    
